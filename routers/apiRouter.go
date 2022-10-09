@@ -10,5 +10,11 @@ func APIRouter(r *gin.Engine) {
 	apiRouter := r.Group("/api")
 	{
 		apiRouter.GET("/", controllers.Hello)
+
+		apiRouter.GET("/user", controllers.UserController{}.GetUsers)
+		apiRouter.GET("/user/:id", controllers.UserController{}.GetUserById)
+		apiRouter.POST("/user", controllers.UserController{}.CreateUser)
+		apiRouter.PUT("/user", controllers.UserController{}.UpdateUser)
+		apiRouter.DELETE("/user", controllers.UserController{}.DeleteUser)
 	}
 }
