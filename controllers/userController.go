@@ -13,7 +13,7 @@ type UserController struct{}
 
 func (UserController) List(c *gin.Context) {
 	users := []models.User{}
-	utils.MysqlDB.Where("is_delete=?", 0).Find(&users)
+	utils.MysqlDB.Preload("Roles").Where("is_delete=?", 0).Find(&users)
 	c.JSON(http.StatusOK, gin.H{
 		"users": users,
 	})
