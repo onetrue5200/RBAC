@@ -18,17 +18,6 @@ func (UserController) GetUsers(c *gin.Context) {
 	})
 }
 
-func (UserController) GetUserById(c *gin.Context) {
-	id := c.Param("id")
-
-	user := models.User{}
-	models.MysqlDB.Where("ID=?", id).Find(&user)
-
-	c.JSON(http.StatusOK, gin.H{
-		"user": user,
-	})
-}
-
 func (UserController) CreateUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
