@@ -29,5 +29,9 @@ func APIRouter(r *gin.Engine) {
 		apiRouter.POST("/access", controllers.AccessController{}.Create)
 		apiRouter.PUT("/access", controllers.AccessController{}.Update)
 		apiRouter.DELETE("/access", controllers.AccessController{}.Delete)
+
+		apiRouter.GET("/role_access", controllers.RoleAccessController{}.List)
+		apiRouter.POST("/role_access", controllers.RoleAccessController{}.Create)
+		apiRouter.DELETE("/role_access", controllers.RoleAccessController{}.Delete)
 	}
 }
