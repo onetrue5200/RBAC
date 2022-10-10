@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"rbac/models"
+	"rbac/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,7 @@ type RoleController struct{}
 
 func (RoleController) List(c *gin.Context) {
 	roles := []models.Role{}
-	models.MysqlDB.Where("is_delete=?", 0).Find(&roles)
+	utils.MysqlDB.Where("is_delete=?", 0).Find(&roles)
 	c.JSON(http.StatusOK, gin.H{
 		"roles": roles,
 	})
@@ -22,7 +23,7 @@ func (RoleController) Create(c *gin.Context) {
 	name := c.PostForm("name")
 	// check name
 	roleList := []models.Role{}
-	models.MysqlDB.Where("name=?", name).Find(&roleList)
+	utils.MysqlDB.Where("name=?", name).Find(&roleList)
 	if len(roleList) > 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "name existed",
@@ -33,7 +34,7 @@ func (RoleController) Create(c *gin.Context) {
 	role := models.Role{
 		Name: name,
 	}
-	err := models.MysqlDB.Create(&role).Error
+	err := utils.MysqlDB.Create(&role).Error
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "fail",
@@ -50,7 +51,7 @@ func (RoleController) Update(c *gin.Context) {
 	name := c.PostForm("name")
 	// check if username existed
 	roleList := []models.Role{}
-	models.MysqlDB.Where("name=?", name).Find(&roleList)
+	utils.MysqlDB.Where("name=?", name).Find(&roleList)
 	if len(roleList) > 0 && roleList[0].Id != id {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "name existed",
@@ -59,10 +60,10 @@ func (RoleController) Update(c *gin.Context) {
 	}
 	// update user
 	role := models.Role{}
-	models.MysqlDB.Where("ID=?", id).Find(&role)
+	utils.MysqlDB.Where("ID=?", id).Find(&role)
 	role.Name = name
 
-	err := models.MysqlDB.Save(&role).Error
+	err := utils.MysqlDB.Save(&role).Error
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "fail",
@@ -78,11 +79,11 @@ func (RoleController) Delete(c *gin.Context) {
 	id := c.PostForm("id")
 
 	role := models.Role{}
-	models.MysqlDB.Where("ID=?", id).Find(&role)
+	utils.MysqlDB.Where("ID=?", id).Find(&role)
 
 	role.IsDelete = 1
 
-	err := models.MysqlDB.Save(&role).Error
+	err := utils.MysqlDB.Save(&role).Error
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "fail",

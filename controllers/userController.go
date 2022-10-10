@@ -13,7 +13,7 @@ type UserController struct{}
 
 func (UserController) List(c *gin.Context) {
 	users := []models.User{}
-	models.MysqlDB.Where("is_delete=?", 0).Find(&users)
+	utils.MysqlDB.Where("is_delete=?", 0).Find(&users)
 	c.JSON(http.StatusOK, gin.H{
 		"users": users,
 	})
@@ -24,7 +24,7 @@ func (UserController) Create(c *gin.Context) {
 	password := c.PostForm("password")
 	// check username
 	userList := []models.User{}
-	models.MysqlDB.Where("username=?", username).Find(&userList)
+	utils.MysqlDB.Where("username=?", username).Find(&userList)
 	if len(userList) > 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "username existed",
@@ -36,7 +36,7 @@ func (UserController) Create(c *gin.Context) {
 		Username: username,
 		Password: utils.Md5(password),
 	}
-	err := models.MysqlDB.Create(&user).Error
+	err := utils.MysqlDB.Create(&user).Error
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "fail",
@@ -54,7 +54,7 @@ func (UserController) Update(c *gin.Context) {
 	password := c.PostForm("password")
 	// check if username existed
 	userList := []models.User{}
-	models.MysqlDB.Where("username=?", username).Find(&userList)
+	utils.MysqlDB.Where("username=?", username).Find(&userList)
 	if len(userList) > 0 && userList[0].Id != id {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "username existed",
@@ -63,11 +63,11 @@ func (UserController) Update(c *gin.Context) {
 	}
 	// update user
 	user := models.User{}
-	models.MysqlDB.Where("ID=?", id).Find(&user)
+	utils.MysqlDB.Where("ID=?", id).Find(&user)
 	user.Username = username
 	user.Password = utils.Md5(password)
 
-	err := models.MysqlDB.Save(&user).Error
+	err := utils.MysqlDB.Save(&user).Error
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "fail",
@@ -83,11 +83,11 @@ func (UserController) Delete(c *gin.Context) {
 	id := c.PostForm("id")
 
 	user := models.User{}
-	models.MysqlDB.Where("ID=?", id).Find(&user)
+	utils.MysqlDB.Where("ID=?", id).Find(&user)
 
 	user.IsDelete = 1
 
-	err := models.MysqlDB.Save(&user).Error
+	err := utils.MysqlDB.Save(&user).Error
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "fail",
