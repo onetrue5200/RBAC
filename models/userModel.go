@@ -5,7 +5,6 @@ type User struct {
 	Username string
 	Password string
 	IsSuper  int
-	RoleId   int
 	IsDelete int
 }
 
