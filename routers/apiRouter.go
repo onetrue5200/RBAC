@@ -2,12 +2,13 @@ package routers
 
 import (
 	"rbac/controllers"
+	"rbac/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
 
 func APIRouter(r *gin.Engine) {
-	apiRouter := r.Group("/api")
+	apiRouter := r.Group("/api", middlewares.CorsMiddleware)
 	{
 		apiRouter.GET("/", controllers.Hello)
 
