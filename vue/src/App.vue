@@ -1,10 +1,28 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div class="common-layout">
+    <el-container>
+      <el-header>RBAC</el-header>
+      <el-container>
+        <el-aside width="15vw">
+          <NavBar />
+        </el-aside>
+        <el-main>
+          <router-view />
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
 </template>
+
+<script>
+import NavBar from '@/components/NavBar.vue'
+
+export default {
+  components: {
+    NavBar,
+  }
+}
+</script>
 
 <style>
 #app {
