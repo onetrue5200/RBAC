@@ -1,5 +1,17 @@
-<template>access</template>
+<template>
+    <CardContainer>
+        Access
+    </CardContainer>
+</template>
 
-<script></script>
+<script>
+import CardContainer from '@/components/CardContainer'
+
+export default {
+    components: {
+        CardContainer,
+    }
+}
+</script>
 
 <style scoped></style>
