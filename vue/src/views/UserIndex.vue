@@ -60,6 +60,12 @@
                 <el-form-item label="密码">
                     <el-input v-model="formedit.password" />
                 </el-form-item>
+                <el-form-item label="角色">
+                    <el-checkbox-group v-model="checkList">
+                        <el-checkbox v-for="role in roles" :key="role.Id" :label="role.Name" border
+                            @change="do_role(role.Id)" />
+                    </el-checkbox-group>
+                </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
@@ -84,6 +90,10 @@ export default {
     },
     setup() {
         let data = ref([]);
+        let roles = ref([]);
+        let user_id = ref('');
+        let role_id = ref('');
+        const checkList = ref([])
 
         let dialogFormVisible = ref(false)
         let form = reactive({
@@ -105,7 +115,14 @@ export default {
                 url: "http://127.0.0.1:3000/api/user",
                 type: "get",
                 success(resp) {
-                    data.value = resp.data
+                    data.value = resp.data;
+                },
+            });
+            $.ajax({
+                url: "http://127.0.0.1:3000/api/role",
+                type: "get",
+                success(resp) {
+                    roles.value = resp.data;
                 },
             });
         };
@@ -132,9 +149,19 @@ export default {
 
         const edit_user = (user) => {
             dialogFormEdit.value = true;
+            user_id = user.Id;
             formedit.id = user.Id;
             formedit.username = user.Username;
             formedit.password = "";
+            checkList.value = [];
+            for (let t of data.value) {
+                if (t["Id"] === user.Id) {
+                    for (let role of t["Roles"]) {
+                        checkList.value.push(role["Name"])
+                    }
+                    break;
+                }
+            }
         }
 
         const do_edit_user = () => {
@@ -169,20 +196,71 @@ export default {
                     }
                 },
             });
+        };
+
+        const do_role = (id) => {
+            role_id = id;
+
+            let local_user_id = user_id;
+            let roles_num;
+            for (let t of data.value) {
+                if (parseInt(t["Id"]) === local_user_id) {
+                    roles_num = t["Roles"].length;
+                    break;
+                }
+            }
+            if (roles_num < checkList.value.length) {
+                $.ajax({
+                    url: "http://127.0.0.1:3000/api/user_role",
+                    type: "post",
+                    data: {
+                        user_id: user_id,
+                        role_id: role_id,
+                    },
+                    success(resp) {
+                        if (resp.message === "success") {
+                            refresh();
+                        } else {
+                            ElMessage(resp.message)
+                        }
+                    },
+                });
+            } else if (roles_num > checkList.value.length) {
+                $.ajax({
+                    url: "http://127.0.0.1:3000/api/user_role",
+                    type: "put",
+                    data: {
+                        user_id: user_id,
+                        role_id: role_id,
+                    },
+                    success(resp) {
+                        if (resp.message === "success") {
+                            refresh();
+                        } else {
+                            ElMessage(resp.message)
+                        }
+                    },
+                });
+            }
         }
 
         return {
             data,
+            roles,
+            user_id,
+            role_id,
             Plus,
             dialogFormVisible,
             form,
             dialogFormEdit,
             formedit,
+            checkList,
 
             add_user,
             edit_user,
             do_edit_user,
             delete_user,
+            do_role,
         }
     }
 }
