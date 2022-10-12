@@ -15,7 +15,7 @@ func (UserController) List(c *gin.Context) {
 	users := []models.User{}
 	utils.MysqlDB.Preload("Roles").Where("is_delete=?", 0).Find(&users)
 	c.JSON(http.StatusOK, gin.H{
-		"users": users,
+		"data": users,
 	})
 }
 
@@ -27,7 +27,7 @@ func (UserController) Create(c *gin.Context) {
 	utils.MysqlDB.Where("username=?", username).Find(&userList)
 	if len(userList) > 0 {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "username existed",
+			"message": "用户名已存在",
 		})
 		return
 	}
@@ -65,7 +65,9 @@ func (UserController) Update(c *gin.Context) {
 	user := models.User{}
 	utils.MysqlDB.Where("ID=?", id).Find(&user)
 	user.Username = username
-	user.Password = utils.Md5(password)
+	if password == "" {
+		user.Password = utils.Md5(password)
+	}
 
 	err := utils.MysqlDB.Save(&user).Error
 	if err != nil {
@@ -80,7 +82,7 @@ func (UserController) Update(c *gin.Context) {
 }
 
 func (UserController) Delete(c *gin.Context) {
-	id := c.PostForm("id")
+	id := c.Param("id")
 
 	user := models.User{}
 	utils.MysqlDB.Where("ID=?", id).Find(&user)

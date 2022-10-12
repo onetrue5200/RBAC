@@ -14,7 +14,7 @@ func APIRouter(r *gin.Engine) {
 		apiRouter.GET("/user", controllers.UserController{}.List)
 		apiRouter.POST("/user", controllers.UserController{}.Create)
 		apiRouter.PUT("/user", controllers.UserController{}.Update)
-		apiRouter.DELETE("/user", controllers.UserController{}.Delete)
+		apiRouter.DELETE("/user/:id", controllers.UserController{}.Delete)
 
 		apiRouter.GET("/role", controllers.RoleController{}.List)
 		apiRouter.POST("/role", controllers.RoleController{}.Create)
