@@ -158,12 +158,10 @@ export default {
         };
 
         const delete_user = (id) => {
-            console.log(id);
             $.ajax({
                 url: "http://127.0.0.1:3000/api/user/" + id,
                 type: "delete",
                 success(resp) {
-                    console.log(resp);
                     if (resp.message === "success") {
                         refresh();
                     } else {

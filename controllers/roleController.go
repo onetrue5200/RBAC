@@ -13,9 +13,9 @@ type RoleController struct{}
 
 func (RoleController) List(c *gin.Context) {
 	roles := []models.Role{}
-	utils.MysqlDB.Where("is_delete=?", 0).Find(&roles)
+	utils.MysqlDB.Preload("Accesses").Where("is_delete=?", 0).Find(&roles)
 	c.JSON(http.StatusOK, gin.H{
-		"roles": roles,
+		"data": roles,
 	})
 }
 
@@ -26,7 +26,7 @@ func (RoleController) Create(c *gin.Context) {
 	utils.MysqlDB.Where("name=?", name).Find(&roleList)
 	if len(roleList) > 0 {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "name existed",
+			"message": "角色名存在",
 		})
 		return
 	}
@@ -54,7 +54,7 @@ func (RoleController) Update(c *gin.Context) {
 	utils.MysqlDB.Where("name=?", name).Find(&roleList)
 	if len(roleList) > 0 && roleList[0].Id != id {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "name existed",
+			"message": "角色名存在",
 		})
 		return
 	}
@@ -76,7 +76,7 @@ func (RoleController) Update(c *gin.Context) {
 }
 
 func (RoleController) Delete(c *gin.Context) {
-	id := c.PostForm("id")
+	id := c.Param("id")
 
 	role := models.Role{}
 	utils.MysqlDB.Where("ID=?", id).Find(&role)
