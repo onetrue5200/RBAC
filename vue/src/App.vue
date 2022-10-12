@@ -1,7 +1,9 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-header class="header">简单的RBAC权限管理系统</el-header>
+      <el-header>
+        <HeaderBar />
+      </el-header>
       <el-container>
         <el-aside width="15vw">
           <NavBar />
@@ -16,10 +18,12 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import HeaderBar from '@/components/HeaderBar.vue'
 
 export default {
   components: {
     NavBar,
+    HeaderBar,
   }
 }
 </script>
@@ -30,11 +34,5 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-
-.header {
-  font-size: 2.5vw;
-  margin: 10px;
-  text-align: center;
 }
 </style>

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import AdminLogin from '@/views/AdminLogin.vue'
 import UserIndex from '@/views/UserIndex'
 import RoleIndex from '@/views/RoleIndex'
 import AccessIndex from '@/views/AccessIndex'
@@ -8,7 +9,7 @@ const routes = [
   {
     path: "/",
     name: "home",
-    redirect: "/user/",
+    component: AdminLogin,
   },
   {
     path: "/user/",

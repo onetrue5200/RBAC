@@ -11,6 +11,8 @@ func APIRouter(r *gin.Engine) {
 	{
 		apiRouter.GET("/", controllers.Hello)
 
+		apiRouter.POST("/login", controllers.Login)
+
 		apiRouter.GET("/user", controllers.UserController{}.List)
 		apiRouter.POST("/user", controllers.UserController{}.Create)
 		apiRouter.PUT("/user", controllers.UserController{}.Update)

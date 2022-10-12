@@ -65,7 +65,7 @@ func (UserController) Update(c *gin.Context) {
 	user := models.User{}
 	utils.MysqlDB.Where("ID=?", id).Find(&user)
 	user.Username = username
-	if password == "" {
+	if password != "" {
 		user.Password = utils.Md5(password)
 	}
 
