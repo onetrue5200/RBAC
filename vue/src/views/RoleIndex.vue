@@ -52,6 +52,12 @@
                 <el-form-item label="角色名">
                     <el-input v-model="formedit.name" />
                 </el-form-item>
+                <el-form-item label="权限">
+                    <el-checkbox-group v-model="checkList">
+                        <el-checkbox v-for="access in accesses" :key="access.Id" :label="access.Name" border
+                            @change="do_access(access.Id)" />
+                    </el-checkbox-group>
+                </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
@@ -76,6 +82,10 @@ export default {
     },
     setup() {
         let data = ref([]);
+        let accesses = ref([]);
+        let role_id = ref('');
+        let access_id = ref('');
+        const checkList = ref([])
 
         let dialogFormVisible = ref(false)
         let form = reactive({
@@ -95,6 +105,13 @@ export default {
                 type: "get",
                 success(resp) {
                     data.value = resp.data
+                },
+            });
+            $.ajax({
+                url: "http://127.0.0.1:3000/api/access",
+                type: "get",
+                success(resp) {
+                    accesses.value = resp.data;
                 },
             });
         };
@@ -118,10 +135,20 @@ export default {
             });
         };
 
-        const edit_data = (user) => {
+        const edit_data = (role) => {
             dialogFormEdit.value = true;
-            formedit.id = user.Id;
-            formedit.name = user.Name;
+            formedit.id = role.Id;
+            formedit.name = role.Name;
+            role_id = role.Id;
+            checkList.value = [];
+            for (let t of data.value) {
+                if (t["Id"] === role.Id) {
+                    for (let access of t["Accesses"]) {
+                        checkList.value.push(access["Name"])
+                    }
+                    break;
+                }
+            }
         }
 
         const do_edit_data = () => {
@@ -157,8 +184,57 @@ export default {
             });
         }
 
+        const do_access = (id) => {
+            access_id = id;
+
+            let local_role_id = role_id;
+            let accesses_num;
+            for (let t of data.value) {
+                if (parseInt(t["Id"]) === local_role_id) {
+                    accesses_num = t["Accesses"].length;
+                    break;
+                }
+            }
+            
+            if (accesses_num < checkList.value.length) {
+                $.ajax({
+                    url: "http://127.0.0.1:3000/api/role_access",
+                    type: "post",
+                    data: {
+                        role_id: role_id,
+                        access_id: access_id,
+                    },
+                    success(resp) {
+                        if (resp.message === "success") {
+                            refresh();
+                        } else {
+                            ElMessage(resp.message)
+                        }
+                    },
+                });
+            } else if (accesses_num > checkList.value.length) {
+                $.ajax({
+                    url: "http://127.0.0.1:3000/api/role_access",
+                    type: "put",
+                    data: {
+                        role_id: role_id,
+                        access_id: access_id,
+                    },
+                    success(resp) {
+                        if (resp.message === "success") {
+                            refresh();
+                        } else {
+                            ElMessage(resp.message)
+                        }
+                    },
+                });
+            }
+        }
+
         return {
             data,
+            accesses,
+            checkList,
             Plus,
             dialogFormVisible,
             form,
@@ -169,6 +245,7 @@ export default {
             edit_data,
             do_edit_data,
             delete_data,
+            do_access,
         }
     }
 }
