@@ -92,7 +92,7 @@ func (AccessController) Update(c *gin.Context) {
 }
 
 func (AccessController) Delete(c *gin.Context) {
-	id := c.PostForm("id")
+	id := c.Param("id")
 
 	data := models.Access{}
 	utils.MysqlDB.Where("ID=?", id).Find(&data)
